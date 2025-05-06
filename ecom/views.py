@@ -892,8 +892,10 @@ def mafia_recommend_view(request):
         # Sắp xếp các luật theo confidence và support
     sorted_rules = sorted(rules, key=lambda x: (-x['confidence'], -x['support']))
 
-    # Lưu luật vào session
-    request.session['mafia_rules'] = sorted_rules
+    # Gọi hàm lưu vào DB
+    from .models import AssociationRule
+    AssociationRule.objects.all().delete()
+    generate_association_rules(MFI, transactions, min_conf)
 
     return render(request, 'ecom/mafia_recommend.html', {
         'rules': sorted_rules,
